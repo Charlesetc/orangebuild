@@ -5,7 +5,7 @@
 lines=`find src -name '*.ml' | xargs cat | wc -l`
 echo '
 
-I desperately wanted to be able to organize my ocaml code into directories which corresponded to modules. :sun: that"'"s exactly what orangebuild does!
+I desperately wanted to be able to organize my ocaml code into directories which corresponded to modules. So that"'"s exactly what orangebuild does!
 
 ... in "$lines" lines of ocaml.
 

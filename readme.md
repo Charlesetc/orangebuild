@@ -1,6 +1,6 @@
 
 
-I desperately wanted to be able to organize my ocaml code into directories which corresponded to modules. :sun: that"s exactly what orangebuild does!
+I desperately wanted to be able to organize my ocaml code into directories which corresponded to modules. So that"s exactly what orangebuild does!
 
 ... in 187 lines of ocaml.
 
