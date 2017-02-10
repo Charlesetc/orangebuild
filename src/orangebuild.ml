@@ -50,20 +50,11 @@ with Invalid_argument _ ->
 exception Execution_error of string
 
 let execute_command command =
-  match (Unix.system command) with
-  | Unix.WEXITED 0 -> ()
+  match (Sys.command command) with
+  | 0 -> ()
   | _ -> raise (Execution_error command)
 
-
-(* hacky code to echo and execute command *)
-let prefix = ""
-let ocamlc command = execute_command @@ prefix ^ "ocamlc " ^ command
-let prefix = "echo "
-let ocamlc_echo command = execute_command @@ prefix ^ "ocamlc " ^ command
-let ocamlc command = ocamlc_echo command ; ocamlc command
-
-let starting_dir = Sys.getcwd ()
-
+let ocamlc command = execute_command @@ "ocamlc " ^ command
 
 (* make a function that will copy
  * the directory structure and files into the _build directory *)
@@ -155,10 +146,6 @@ class directory
         (fun child -> "_build/" ^ child#path ^ ".cmo")
         children
     in
-
-(*     ExtLib.output_file *)
-(*       ~filepath:("_build/" ^ module_file) *)
-(*       ~text:self#structure ; *)
 
     compile_directory
       ~dependencies
