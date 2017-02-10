@@ -7,7 +7,7 @@
 (*
   Outline:
 
-    Jamboree constructs and links together modules for your code.
+    Orangebuild constructs and links together modules for your code.
     It's based on directory structure, so you don't have to worry.
     
     Take this structure:
@@ -37,13 +37,6 @@
 
 *)
 
-(* get the first argument passed orangebuild *)
-
-let first_argument : string = try
-  Array.get Sys.argv 1
-with Invalid_argument _ ->
-  prerr_endline "usage: orangebuild [project]"; exit 0
-
 
 (* define a function that will execute a command and raise an exception *)
 
@@ -54,7 +47,9 @@ let execute_command command =
   | 0 -> ()
   | _ -> raise (Execution_error command)
 
-let ocamlc command = execute_command @@ "ocamlc " ^ command
+let ocaml_compiler = ref "ocamlc"
+
+let ocamlc command = execute_command @@ !ocaml_compiler ^ " " ^ command
 
 (* make a function that will copy
  * the directory structure and files into the _build directory *)
@@ -176,12 +171,26 @@ let rec read_in_directory (path : string) : directory =
   in
   new directory path files children
 
-(* define a representation of an absolute module structure
-   for each directory, it will have to ignore itself and it's
-   children *)
+(* get the first argument passed orangebuild *)
+
+let first_argument : string = try
+  Array.get Sys.argv 1
+with Invalid_argument _ ->
+  prerr_endline "usage: orangebuild [project]"; exit 0
+
+(* argument parsing *)
+
+let spec = [
+  ("-c", Arg.Set_string ocaml_compiler, "set the compiler used to compile things; can even include default arguments")
+]
+let usage = "\norangebuild is used to build directories into ocaml modules.\n\nusage: orangebuild [project]\n"
 
 (* start all the processes that need to happen: *)
-let()=
-  let project = read_in_directory first_argument in
+
+let build_project path =
+  let project = read_in_directory path in
   write_build_directory project ;
   project#compile ()
+
+let () =
+  Arg.parse spec build_project usage ;
